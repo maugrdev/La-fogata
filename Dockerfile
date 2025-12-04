@@ -1,16 +1,20 @@
-<VirtualHost *:80>
-    ServerAdmin webmaster@localhost
-    DocumentRoot /var/www/html
+# Usa una imagen base de PHP con Apache
+FROM php:8.2-apache
 
-    # CRÍTICO: Indica a Apache que use public_menu.php como página de inicio
-    DirectoryIndex public_menu.php index.php
+# 1. Instala el driver de PostgreSQL (si usas la DB de Render)
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    && docker-php-ext-install pdo pdo_pgsql
 
-    <Directory /var/www/html>
-        # CRÍTICO: Permite que los archivos .htaccess funcionen
-        AllowOverride All
-        Require all granted
-    </Directory>
+# 2. Habilita el módulo de reescritura de Apache
+RUN a2enmod rewrite
 
-    ErrorLog ${APACHE_LOG_DIR}/error.log
-    CustomLog ${APACHE_LOG_DIR}/access.log combined
-</VirtualHost>
+# 3. CRÍTICO: Copia el archivo de configuración de Apache
+#    Este archivo debe existir en tu repositorio.
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# 4. Copia todos los archivos de tu proyecto al directorio web de Apache
+COPY . /var/www/html/
+
+# 5. Establece los permisos correctos
+RUN chown -R www-data:www-data /var/www/html
