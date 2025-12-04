@@ -374,7 +374,7 @@ mysqli_close($conexion);
             </div>
             
             <div class="pos-volver">
-                <a href="index.php"><i class="fas fa-arrow-left"></i> Volver al Menú Principal</a>
+                <a href="interfaz.php"><i class="fas fa-arrow-left"></i> Volver al Menú Principal</a>
                 
                 <a href="corte_caja.php" class="btn-corte-caja" title="Realizar el cierre y reporte diario">
                     <i class="fas fa-cash-register"></i> Corte de Caja

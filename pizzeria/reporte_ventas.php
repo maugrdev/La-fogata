@@ -334,7 +334,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php endif; ?>
 
         <div class="volver-menu">
-            <a href="index.php"><i class="fas fa-arrow-left"></i> Volver al Menú Principal</a>
+            <a href="interfaz.php"><i class="fas fa-arrow-left"></i> Volver al Menú Principal</a>
         </div>
     </div>
 

@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['id_usuario'] = $usuario_db['id'];
             $_SESSION['nombre_usuario'] = $usuario_db['nombre'];
             $_SESSION['autenticado'] = true;
-            header("Location: index.php");
+            header("Location: interfaz.php");
             exit();
         } else {
             // Mensaje de error usa color Rojo Tomate
@@ -184,7 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
                 </button>
                 
-                <a href="public_menu.php" class="btn-regresar">
+                <a href="index.php" class="btn-regresar">
                     <i class="fas fa-chevron-circle-left"></i> Volver al Menú Público
                 </a>
             </div>
