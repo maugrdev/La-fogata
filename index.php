@@ -542,7 +542,8 @@ if ($resultado_productos) {
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
 
 ?>
+
 
