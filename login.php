@@ -5,16 +5,16 @@ session_start();
 $mensaje = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = mysqli_real_escape_string($conexion, $_POST['usuario']);
-    $password = mysqli_real_escape_string($conexion, $_POST['password']);
+    $usuario = pg_real_escape_string($conexion, $_POST['usuario']);
+    $password = pg_real_escape_string($conexion, $_POST['password']);
     
     // NOTA: EL CÓDIGO DE LOGIN NO USA HASHING DE CONTRASEÑAS. 
     // EN UN ENTORNO REAL, DEBES USAR password_hash() y password_verify().
     $sql = "SELECT id, nombre, psem FROM usuarios WHERE nombre = '$usuario'";
-    $resultado = mysqli_query($conexion, $sql);
+    $resultado = pg_query($conexion, $sql);
 
-    if ($resultado && mysqli_num_rows($resultado) == 1) {
-        $usuario_db = mysqli_fetch_assoc($resultado);
+    if ($resultado && pg_num_rows($resultado) == 1) {
+        $usuario_db = pg_fetch_assoc($resultado);
         // La comparación de contraseña es plana, según el código original:
         if ($password === $usuario_db['psem']) { 
             $_SESSION['id_usuario'] = $usuario_db['id'];
@@ -30,7 +30,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Mensaje de error usa color Rojo Tomate
         $mensaje = "<p class='error-message'>❌ Usuario no encontrado.</p>";
     }
-    mysqli_close($conexion);
+    pg_close($conexion);
 }
 ?>
 
@@ -191,4 +191,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </form>
     </div>
 </body>
+
 </html>
