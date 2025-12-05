@@ -3,17 +3,20 @@
 include 'conexion.php'; 
 
 // Obtener la lista de PRODUCTOS de la base de datos
-// Se mantiene la consulta original
-$sql_productos = "SELECT id, nombre, precio, descripcion, imagen_ruta FROM productos GROUP BY nombre ORDER BY nombre ASC";
+// Se ELIMINÓ 'GROUP BY nombre' porque causa errores en PostgreSQL y es innecesario
+$sql_productos = "SELECT id, nombre, precio, descripcion, imagen_ruta FROM productos ORDER BY nombre ASC";
 $resultado_productos = pg_query($conexion, $sql_productos);
 $productos = [];
+
 if ($resultado_productos) {
-    while ($p = mysqli_fetch_assoc($resultado_productos)) {
+    // CORRECCIÓN: Se usa pg_fetch_assoc() en lugar de mysqli_fetch_assoc()
+    while ($p = pg_fetch_assoc($resultado_productos)) { 
         // Aseguramos que el precio sea un número
         $p['precio_numerico'] = floatval($p['precio']); 
         $productos[] = $p;
     }
-    mysqli_free_result($resultado_productos);
+    // CORRECCIÓN: Se usa pg_free_result() en lugar de mysqli_free_result()
+    pg_free_result($resultado_productos); 
 }
 ?>
 
@@ -542,3 +545,4 @@ if ($resultado_productos) {
 mysqli_close($conexion);
 
 ?>
+
