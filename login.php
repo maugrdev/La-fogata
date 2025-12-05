@@ -5,8 +5,8 @@ session_start();
 $mensaje = '';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $usuario = pg_real_escape_string($conexion, $_POST['usuario']);
-    $password = pg_real_escape_string($conexion, $_POST['password']);
+    $usuario = pg_escape_string($conexion, $_POST['usuario']);
+    $password = pg_escape_string($conexion, $_POST['password']);
     
     // NOTA: EL CÓDIGO DE LOGIN NO USA HASHING DE CONTRASEÑAS. 
     // EN UN ENTORNO REAL, DEBES USAR password_hash() y password_verify().
@@ -193,3 +193,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </body>
 
 </html>
+
