@@ -5,7 +5,7 @@ include 'conexion.php';
 // Obtener la lista de PRODUCTOS de la base de datos
 // Se mantiene la consulta original
 $sql_productos = "SELECT id, nombre, precio, descripcion, imagen_ruta FROM productos GROUP BY nombre ORDER BY nombre ASC";
-$resultado_productos = mysqli_query($conexion, $sql_productos);
+$resultado_productos = pg_query($conexion, $sql_productos);
 $productos = [];
 if ($resultado_productos) {
     while ($p = mysqli_fetch_assoc($resultado_productos)) {
@@ -540,4 +540,5 @@ if ($resultado_productos) {
 
 <?php
 mysqli_close($conexion);
+
 ?>
