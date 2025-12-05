@@ -20,6 +20,11 @@ RUN chmod -R 775 /var/www/html
 
 # 6. Establece el directorio de trabajo para la ejecución
 WORKDIR /var/www/html
+# Instala las extensiones necesarias, incluyendo la de PostgreSQL
+RUN apt-get update && \
+    apt-get install -y libpq-dev && \
+    docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql && \
+    docker-php-ext-install pdo pdo_pgsql pgsql
 
 # 7. Ejecuta el servidor Apache como el comando principal
 CMD ["apache2-foreground"]
