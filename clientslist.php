@@ -20,17 +20,17 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     } else {
         // Ejecutar eliminación
         $sql_delete = "DELETE FROM clientes WHERE id = $id_cliente";
-        if (mysqli_query($conexion, $sql_delete)) {
+        if (pg_query($conexion, $sql_delete)) {
             $mensaje = "<div class='success-msg'><i class='fas fa-check-circle'></i> Cliente eliminado correctamente.</div>";
         } else {
-            $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al eliminar: " . mysqli_error($conexion) . "</div>";
+            $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al eliminar: " . pg_error($conexion) . "</div>";
         }
     }
 }
 
 // 3. CONSULTAR y LISTAR Clientes
 $sql_clientes = "SELECT id, nombre, telefono, direccion FROM clientes ORDER BY id DESC";
-$resultado_clientes = mysqli_query($conexion, $sql_clientes);
+$resultado_clientes = pg_query($conexion, $sql_clientes);
 ?>
 
 <!DOCTYPE html>
@@ -260,8 +260,8 @@ $resultado_clientes = mysqli_query($conexion, $sql_clientes);
                 </tr>
             </thead>
             <tbody>
-                <?php if (mysqli_num_rows($resultado_clientes) > 0): ?>
-                    <?php while($cliente = mysqli_fetch_assoc($resultado_clientes)): ?>
+                <?php if (pg_num_rows($resultado_clientes) > 0): ?>
+                    <?php while($cliente = pg_fetch_assoc($resultado_clientes)): ?>
                         <tr>
                             <td><?php echo $cliente['id']; ?></td>
                             <td><?php echo htmlspecialchars($cliente['nombre']); ?></td>
@@ -291,5 +291,6 @@ $resultado_clientes = mysqli_query($conexion, $sql_clientes);
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
