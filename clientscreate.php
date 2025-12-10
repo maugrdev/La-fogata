@@ -22,10 +22,10 @@ if (isset($_GET['id'])) {
     $titulo = 'Editar Cliente ID: ' . $cliente_id;
     
     $sql_fetch = "SELECT nombre, telefono, direccion FROM clientes WHERE id = $cliente_id";
-    $result_fetch = mysqli_query($conexion, $sql_fetch);
+    $result_fetch = pg_query($conexion, $sql_fetch);
     
-    if ($result_fetch && mysqli_num_rows($result_fetch) == 1) {
-        $cliente = mysqli_fetch_assoc($result_fetch);
+    if ($result_fetch && pg_num_rows($result_fetch) == 1) {
+        $cliente = pg_fetch_assoc($result_fetch);
         $nombre = $cliente['nombre'];
         $telefono = $cliente['telefono'];
         $direccion = $cliente['direccion'];
@@ -38,9 +38,9 @@ if (isset($_GET['id'])) {
 // 3. Lógica para PROCESAR el formulario (POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $cliente_id_post = (int)$_POST['cliente_id'];
-    $nombre_post = mysqli_real_escape_string($conexion, $_POST['nombre']);
-    $telefono_post = mysqli_real_escape_string($conexion, $_POST['telefono']);
-    $direccion_post = mysqli_real_escape_string($conexion, $_POST['direccion']);
+    $nombre_post = pg_real_escape_string($conexion, $_POST['nombre']);
+    $telefono_post = pg_real_escape_string($conexion, $_POST['telefono']);
+    $direccion_post = pg_real_escape_string($conexion, $_POST['direccion']);
     
     if ($cliente_id_post > 0) {
         // MODO EDICIÓN
@@ -50,28 +50,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         direccion='$direccion_post' 
                         WHERE id=$cliente_id_post";
         
-        if (mysqli_query($conexion, $sql_guardar)) {
+        if (pg_query($conexion, $sql_guardar)) {
             $mensaje = "<div class='success-msg'>✅ Cliente actualizado con éxito.</div>";
             // Recargar datos actualizados en el formulario
             $nombre = $nombre_post;
             $telefono = $telefono_post;
             $direccion = $direccion_post;
         } else {
-            $mensaje = "<div class='error-msg'>❌ Error al actualizar: " . mysqli_error($conexion) . "</div>";
+            $mensaje = "<div class='error-msg'>❌ Error al actualizar: " . pg_error($conexion) . "</div>";
         }
     } else {
         // MODO CREACIÓN
         $sql_guardar = "INSERT INTO clientes (nombre, telefono, direccion) 
                          VALUES ('$nombre_post', '$telefono_post', '$direccion_post')";
         
-        if (mysqli_query($conexion, $sql_guardar)) {
-            $id_nuevo = mysqli_insert_id($conexion);
+        if (pg_query($conexion, $sql_guardar)) {
+            $id_nuevo = pg_insert_id($conexion);
             $mensaje = "<div class='success-msg'>✅ Cliente creado con éxito (ID: $id_nuevo). Redirigiendo...</div>";
             // Redirigir al listado después de crear
             header("Location: clientslist.php");
             exit();
         } else {
-            $mensaje = "<div class='error-msg'>❌ Error al crear: " . mysqli_error($conexion) . "</div>";
+            $mensaje = "<div class='error-msg'>❌ Error al crear: " . pg_error($conexion) . "</div>";
         }
     }
 }
@@ -271,5 +271,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
