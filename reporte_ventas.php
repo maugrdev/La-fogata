@@ -31,21 +31,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     ORDER BY v.fecha DESC";
 
     // 2.2. Preparar la consulta
-    $stmt = mysqli_prepare($conexion, $sql_ventas);
+    $stmt = pg_prepare($conexion, $sql_ventas);
 
     if ($stmt) {
         // 2.3. Vincular los parámetros (s = string para ambas fechas)
-        mysqli_stmt_bind_param($stmt, "ss", $fecha_inicio, $fecha_fin);
+        pg_stmt_bind_param($stmt, "ss", $fecha_inicio, $fecha_fin);
         
         // 2.4. Ejecutar la consulta
-        mysqli_stmt_execute($stmt);
+        pg_stmt_execute($stmt);
         
         // 2.5. Obtener el resultado
-        $resultado_ventas = mysqli_stmt_get_result($stmt);
+        $resultado_ventas = pg_stmt_get_result($stmt);
 
         if ($resultado_ventas) {
-            if (mysqli_num_rows($resultado_ventas) > 0) {
-                while ($venta = mysqli_fetch_assoc($resultado_ventas)) {
+            if (pg_num_rows($resultado_ventas) > 0) {
+                while ($venta = pg_fetch_assoc($resultado_ventas)) {
                     $ventas_detalladas[] = $venta;
                     $total_final += $venta['total'];
                 }
@@ -54,10 +54,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
         
-        mysqli_stmt_close($stmt);
+        pg_stmt_close($stmt);
 
     } else {
-        $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> Error al preparar la consulta: " . mysqli_error($conexion) . "</div>";
+        $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> Error al preparar la consulta: " . pg_error($conexion) . "</div>";
     }
 } else {
     // Si no se ha enviado el formulario al cargar la página
@@ -342,5 +342,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
