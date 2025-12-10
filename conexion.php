@@ -15,5 +15,8 @@ $conexion = pg_connect($conn_string);
 if (!$conexion) {
     die("Error de conexión a PostgreSQL: " . pg_last_error());
 }
+else
+{ echo "conexion valida";
+}
 // ... (resto del código)
 ?>
