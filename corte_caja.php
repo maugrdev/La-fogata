@@ -13,24 +13,24 @@ $fecha_actual = date("Y-m-d");
 
 // 2. Lógica para REALIZAR el Corte de Caja (Guardar el total del día)
 if (isset($_POST['action']) && $_POST['action'] == 'corte') {
-    // Nota: El uso de mysqli_real_escape_string es seguro, pero se recomienda mysqli_prepare
+    // Nota: El uso de pg_real_escape_string es seguro, pero se recomienda pg_prepare
     // para consultas con variables (lo mantengo como estaba en tu código original).
-    $venta_dia = mysqli_real_escape_string($conexion, $_POST['venta_dia']);
-    $fecha_corte = mysqli_real_escape_string($conexion, $_POST['fecha_corte']);
+    $venta_dia = pg_real_escape_string($conexion, $_POST['venta_dia']);
+    $fecha_corte = pg_real_escape_string($conexion, $_POST['fecha_corte']);
 
     // Verificar si ya existe un corte para la fecha
     $sql_check = "SELECT id FROM cortecaja WHERE fecha = '$fecha_corte'";
-    $result_check = mysqli_query($conexion, $sql_check);
+    $result_check = pg_query($conexion, $sql_check);
 
-    if (mysqli_num_rows($result_check) == 0) {
+    if (pg_num_rows($result_check) == 0) {
         // No existe, se inserta el corte
         $sql_insert = "INSERT INTO cortecaja (fecha, VentaDia) VALUES ('$fecha_corte', '$venta_dia')";
-        if (mysqli_query($conexion, $sql_insert)) {
+        if (pg_query($conexion, $sql_insert)) {
             // Se usa redirección para evitar reenvío de formulario (Post/Redirect/Get pattern)
             header("Location: corte_caja.php?success=1");
             exit(); 
         } else {
-            $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al guardar el corte: " . mysqli_error($conexion) . "</div>";
+            $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al guardar el corte: " . pg_error($conexion) . "</div>";
         }
     } else {
         $mensaje = "<div class='error-msg'><i class='fas fa-exclamation-triangle'></i> Ya existe un Corte de Caja registrado para la fecha $fecha_corte.</div>";
@@ -41,13 +41,13 @@ if (isset($_POST['action']) && $_POST['action'] == 'corte') {
 $sql_ventas_hoy = "SELECT SUM(total) as total_dia 
                    FROM ventas 
                    WHERE DATE(fecha) = '$fecha_actual'";
-$resultado_ventas_hoy = mysqli_query($conexion, $sql_ventas_hoy);
-$fila_ventas_hoy = mysqli_fetch_assoc($resultado_ventas_hoy);
+$resultado_ventas_hoy = pg_query($conexion, $sql_ventas_hoy);
+$fila_ventas_hoy = pg_fetch_assoc($resultado_ventas_hoy);
 $total_ventas_hoy = $fila_ventas_hoy['total_dia'] ?: 0.00;
 
 // 4. Obtener el HISTORIAL de Cortes de Caja (Tabla CORTESCAJA)
 $sql_historial = "SELECT id, fecha, VentaDia FROM cortecaja ORDER BY fecha DESC";
-$resultado_historial = mysqli_query($conexion, $sql_historial);
+$resultado_historial = pg_query($conexion, $sql_historial);
 ?>
 
 <!DOCTYPE html>
@@ -241,7 +241,7 @@ $resultado_historial = mysqli_query($conexion, $sql_historial);
         <?php 
         // Muestra el mensaje de éxito después de la redirección
         if (isset($_GET['success']) && $_GET['success'] == 1) {
-            $venta_corte = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
+            $venta_corte = pg_fetch_assoc(pg_query($conexion, "SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
             $monto = number_format($venta_corte['VentaDia'] ?? 0.00, 2);
             echo "<div class='success-msg'><i class='fas fa-check-circle'></i> ¡Corte de Caja realizado exitosamente! Total: $$monto</div>";
         }
@@ -261,7 +261,7 @@ $resultado_historial = mysqli_query($conexion, $sql_historial);
                 
                 <?php 
                 // Verificar si ya se realizó el corte hoy para determinar qué mostrar
-                $corte_realizado = mysqli_num_rows(mysqli_query($conexion, "SELECT id FROM cortecaja WHERE fecha = '$fecha_actual'"));
+                $corte_realizado = pg_num_rows(pg_query($conexion, "SELECT id FROM cortecaja WHERE fecha = '$fecha_actual'"));
 
                 if ($total_ventas_hoy > 0 && $corte_realizado == 0): 
                 ?>
@@ -291,8 +291,8 @@ $resultado_historial = mysqli_query($conexion, $sql_historial);
                 </tr>
             </thead>
             <tbody>
-                <?php if (mysqli_num_rows($resultado_historial) > 0): ?>
-                    <?php while($corte = mysqli_fetch_assoc($resultado_historial)): ?>
+                <?php if (pg_num_rows($resultado_historial) > 0): ?>
+                    <?php while($corte = pg_fetch_assoc($resultado_historial)): ?>
                         <tr>
                             <td><?php echo $corte['id']; ?></td>
                             <td><?php echo htmlspecialchars($corte['fecha']); ?></td>
@@ -316,5 +316,6 @@ $resultado_historial = mysqli_query($conexion, $sql_historial);
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
 ?>
+
