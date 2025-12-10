@@ -22,21 +22,21 @@ if (isset($_SESSION['mensaje_pos'])) {
 
 // Obtener productos
 $sql_productos = "SELECT id, nombre, precio FROM productos ORDER BY nombre ASC";
-$resultado_productos = mysqli_query($conexion, $sql_productos);
+$resultado_productos = pg_query($conexion, $sql_productos);
 $productos = [];
 if ($resultado_productos) {
-    $productos = mysqli_fetch_all($resultado_productos, MYSQLI_ASSOC);
+    $productos = pg_fetch_all($resultado_productos, pg_ASSOC);
 } 
 
 // Obtener clientes
 $sql_clientes = "SELECT id, nombre FROM clientes ORDER BY nombre ASC";
-$resultado_clientes = mysqli_query($conexion, $sql_clientes);
+$resultado_clientes = pg_query($conexion, $sql_clientes);
 $clientes = [];
 if ($resultado_clientes) {
-    $clientes = mysqli_fetch_all($resultado_clientes, MYSQLI_ASSOC);
+    $clientes = pg_fetch_all($resultado_clientes, pg_ASSOC);
 } 
 
-mysqli_close($conexion);
+pg_close($conexion);
 ?>
 
 <!DOCTYPE html>
@@ -541,4 +541,5 @@ mysqli_close($conexion);
         actualizarInterfaz();
     </script>
 </body>
+
 </html>
