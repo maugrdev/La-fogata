@@ -17,6 +17,8 @@ if (!$conexion) {
 }
 else
 { echo "conexion valida";
+ select * from usuarios
+     where id = 1;
 }
 // ... (resto del código)
 ?>
