@@ -17,8 +17,7 @@ if (!$conexion) {
 }
 else
 { echo "conexion valida";
- select * from usuarios
-     where id = 1;
+"SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
 }
 // ... (resto del código)
 ?>
