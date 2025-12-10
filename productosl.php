@@ -18,32 +18,32 @@ if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id']))
     $sql_delete = "DELETE FROM productos WHERE id = ?";
     
     // Preparar la declaración
-    $stmt = mysqli_prepare($conexion, $sql_delete);
+    $stmt = pg_prepare($conexion, $sql_delete);
     
     if ($stmt) {
         // Vincular el parámetro (i = integer)
-        mysqli_stmt_bind_param($stmt, "i", $id_producto);
+        pg_stmt_bind_param($stmt, "i", $id_producto);
         
         // Ejecutar la declaración
-        if (mysqli_stmt_execute($stmt)) {
+        if (pg_stmt_execute($stmt)) {
             $mensaje = "<div class='success-msg'><i class='fas fa-check-circle'></i> Producto eliminado correctamente.</div>";
         } else {
             // Verificar si la eliminación falló por una restricción de clave foránea
-            if (mysqli_errno($conexion) == 1451) {
+            if (pg_errno($conexion) == 1451) {
                 $mensaje = "<div class='error-msg'><i class='fas fa-exclamation-triangle'></i> ERROR: No se puede eliminar el producto porque ya está registrado en ventasdet (clave foránea).</div>";
             } else {
-                $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al eliminar: " . mysqli_error($conexion) . "</div>";
+                $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al eliminar: " . pg_error($conexion) . "</div>";
             }
         }
-        mysqli_stmt_close($stmt);
+        pg_stmt_close($stmt);
     } else {
-         $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al preparar la eliminación: " . mysqli_error($conexion) . "</div>";
+         $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> ERROR al preparar la eliminación: " . pg_error($conexion) . "</div>";
     }
 }
 
 // 3. CONSULTAR y LISTAR Productos (INCLUYENDO DESCRIPCION E IMAGEN_RUTA)
 $sql_productos = "SELECT id, nombre, precio, descripcion, imagen_ruta FROM productos ORDER BY nombre ASC";
-$resultado_productos = mysqli_query($conexion, $sql_productos);
+$resultado_productos = pg_query($conexion, $sql_productos);
 ?>
 
 <!DOCTYPE html>
@@ -298,8 +298,8 @@ $resultado_productos = mysqli_query($conexion, $sql_productos);
                 </tr>
             </thead>
             <tbody>
-                <?php if (mysqli_num_rows($resultado_productos) > 0): ?>
-                    <?php while($producto = mysqli_fetch_assoc($resultado_productos)): ?>
+                <?php if (pg_num_rows($resultado_productos) > 0): ?>
+                    <?php while($producto = pg_fetch_assoc($resultado_productos)): ?>
                         <tr>
                             <td><?php echo $producto['id']; ?></td>
                             <td><?php echo htmlspecialchars($producto['nombre']); ?></td>
@@ -338,5 +338,6 @@ $resultado_productos = mysqli_query($conexion, $sql_productos);
 
 <?php
 // Cerrar la conexión
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
