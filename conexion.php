@@ -17,7 +17,9 @@ if (!$conexion) {
 }
 else
 { echo "conexion valida";
-"SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
+$venta_corte = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
+            $monto = number_format($venta_corte['VentaDia'] ?? 0.00, 2);
+            echo "<div class='success-msg'><i class='fas fa-check-circle'></i> ¡Corte de Caja realizado exitosamente! Total: $$monto</div>";
 }
 // ... (resto del código)
 ?>
