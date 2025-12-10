@@ -32,10 +32,10 @@ if (isset($_GET['id'])) {
     
     // Consulta: Incluye el NUEVO campo 'imagen_ruta'
     $sql_fetch = "SELECT nombre, precio, descripcion, imagen_ruta FROM productos WHERE id = $producto_id";
-    $result_fetch = mysqli_query($conexion, $sql_fetch);
+    $result_fetch = pg_query($conexion, $sql_fetch);
     
-    if ($result_fetch && mysqli_num_rows($result_fetch) == 1) {
-        $producto = mysqli_fetch_assoc($result_fetch);
+    if ($result_fetch && pg_num_rows($result_fetch) == 1) {
+        $producto = pg_fetch_assoc($result_fetch);
         $nombre = $producto['nombre'];
         $precio = $producto['precio'];
         $descripcion = $producto['descripcion'];
@@ -50,8 +50,8 @@ if (isset($_GET['id'])) {
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $producto_id_post = (int)$_POST['producto_id'];
     // Sanear datos de entrada
-    $nombre_post = mysqli_real_escape_string($conexion, $_POST['nombre']);
-    $descripcion_post = mysqli_real_escape_string($conexion, $_POST['descripcion']);
+    $nombre_post = pg_real_escape_string($conexion, $_POST['nombre']);
+    $descripcion_post = pg_real_escape_string($conexion, $_POST['descripcion']);
     $precio_raw = str_replace(',', '.', $_POST['precio']); 
     $precio_post = (float)$precio_raw; 
     $imagen_ruta_post = isset($_POST['imagen_ruta_actual']) ? $_POST['imagen_ruta_actual'] : ''; // Usar la ruta existente por defecto
@@ -100,7 +100,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                               imagen_ruta='$imagen_ruta_post'  /* NUEVO CAMPO A ACTUALIZAR */
                               WHERE id=$producto_id_post";
             
-            if (mysqli_query($conexion, $sql_guardar)) {
+            if (pg_query($conexion, $sql_guardar)) {
                 $mensaje = "<div class='success-msg'>✅ Producto actualizado con éxito.</div>";
                 // Recargar datos actualizados en el formulario
                 $nombre = $nombre_post;
@@ -108,20 +108,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $descripcion = $descripcion_post;
                 $imagen_ruta_actual = $imagen_ruta_post;
             } else {
-                $mensaje = "<div class='error-msg'>❌ Error al actualizar: " . mysqli_error($conexion) . "</div>";
+                $mensaje = "<div class='error-msg'>❌ Error al actualizar: " . pg_error($conexion) . "</div>";
             }
         } else {
             // MODO CREACIÓN
             $sql_guardar = "INSERT INTO productos (nombre, precio, descripcion, imagen_ruta) 
                               VALUES ('$nombre_post', '$precio_post', '$descripcion_post', '$imagen_ruta_post')";
             
-            if (mysqli_query($conexion, $sql_guardar)) {
+            if (pg_query($conexion, $sql_guardar)) {
                 $mensaje = "<div class='success-msg'>✅ Producto creado con éxito. Redirigiendo...</div>";
                 // Redirigir al listado después de crear
                 header("Location: productosl.php");
                 exit();
             } else {
-                $mensaje = "<div class='error-msg'>❌ Error al crear: " . mysqli_error($conexion) . "</div>";
+                $mensaje = "<div class='error-msg'>❌ Error al crear: " . pg_error($conexion) . "</div>";
             }
         }
     }
@@ -341,5 +341,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
