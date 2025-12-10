@@ -29,11 +29,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     WHERE DATE(v.fecha) BETWEEN '$fecha_inicio' AND '$fecha_fin'
                     ORDER BY v.fecha DESC";
 
-    $resultado_ventas = mysqli_query($conexion, $sql_ventas);
+    $resultado_ventas = pg_query($conexion, $sql_ventas);
 
     if ($resultado_ventas) {
-        if (mysqli_num_rows($resultado_ventas) > 0) {
-            while ($venta = mysqli_fetch_assoc($resultado_ventas)) {
+        if (pg_num_rows($resultado_ventas) > 0) {
+            while ($venta = pg_fetch_assoc($resultado_ventas)) {
                 $ventas_detalladas[] = $venta;
                 $total_final += $venta['total'];
             }
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mensaje = "<div class='error-msg'><i class='fas fa-exclamation-triangle'></i> No se encontraron ventas en el rango seleccionado.</div>";
         }
     } else {
-        $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> Error en la consulta: " . mysqli_error($conexion) . "</div>";
+        $mensaje = "<div class='error-msg'><i class='fas fa-times-circle'></i> Error en la consulta: " . pg_error($conexion) . "</div>";
     }
 } else {
     // Si no se ha enviado el formulario
@@ -326,5 +326,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
