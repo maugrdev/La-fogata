@@ -24,19 +24,19 @@ if (isset($_GET['id'])) {
     
     // Consultar TRABAJADORES
     $sql_fetch_trab = "SELECT nombre, puesto, tel FROM trabajadores WHERE id = $trabajador_id";
-    $result_trab = mysqli_query($conexion, $sql_fetch_trab);
+    $result_trab = pg_query($conexion, $sql_fetch_trab);
     
-    if ($result_trab && mysqli_num_rows($result_trab) == 1) {
-        $trabajador = mysqli_fetch_assoc($result_trab);
+    if ($result_trab && pg_num_rows($result_trab) == 1) {
+        $trabajador = pg_fetch_assoc($result_trab);
         $nombre = $trabajador['nombre'];
         $puesto = $trabajador['puesto'];
         $telefono = $trabajador['tel'];
 
         // Consultar USUARIOS (Credenciales)
         $sql_fetch_user = "SELECT psem FROM usuarios WHERE id = $trabajador_id";
-        $result_user = mysqli_query($conexion, $sql_fetch_user);
-        if ($result_user && mysqli_num_rows($result_user) == 1) {
-            $usuario = mysqli_fetch_assoc($result_user);
+        $result_user = pg_query($conexion, $sql_fetch_user);
+        if ($result_user && pg_num_rows($result_user) == 1) {
+            $usuario = pg_fetch_assoc($result_user);
             $psem = $usuario['psem'];
         }
     } else {
@@ -48,10 +48,10 @@ if (isset($_GET['id'])) {
 // 3. Lógica para PROCESAR el formulario (POST)
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $trabajador_id_post = (int)$_POST['trabajador_id'];
-    $nombre_post = mysqli_real_escape_string($conexion, $_POST['nombre']);
-    $puesto_post = mysqli_real_escape_string($conexion, $_POST['puesto']);
-    $telefono_post = mysqli_real_escape_string($conexion, $_POST['telefono']);
-    $psem_post = mysqli_real_escape_string($conexion, $_POST['psem']);
+    $nombre_post = pg_real_escape_string($conexion, $_POST['nombre']);
+    $puesto_post = pg_real_escape_string($conexion, $_POST['puesto']);
+    $telefono_post = pg_real_escape_string($conexion, $_POST['telefono']);
+    $psem_post = pg_real_escape_string($conexion, $_POST['psem']);
     
     // --- 3A. Guardar/Actualizar en TRABAJADORES ---
     if ($trabajador_id_post > 0) {
@@ -61,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             puesto='$puesto_post', 
                             tel='$telefono_post'
                             WHERE id=$trabajador_id_post";
-        mysqli_query($conexion, $sql_trabajador);
+        pg_query($conexion, $sql_trabajador);
         $mensaje_trabajador = "datos personales actualizados.";
         $id_nuevo = $trabajador_id_post;
     } else {
@@ -69,11 +69,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $sql_trabajador = "INSERT INTO trabajadores (nombre, puesto, tel) 
                             VALUES ('$nombre_post', '$puesto_post', '$telefono_post')";
         
-        if (mysqli_query($conexion, $sql_trabajador)) {
-            $id_nuevo = mysqli_insert_id($conexion);
+        if (pg_query($conexion, $sql_trabajador)) {
+            $id_nuevo = pg_insert_id($conexion);
             $mensaje_trabajador = "Trabajador registrado (ID: $id_nuevo).";
         } else {
-            $mensaje = "<div class='error-msg'>❌ Error al crear trabajador: " . mysqli_error($conexion) . "</div>";
+            $mensaje = "<div class='error-msg'>❌ Error al crear trabajador: " . pg_error($conexion) . "</div>";
             $id_nuevo = 0; 
         }
     }
@@ -81,9 +81,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // --- 3B. Guardar/Actualizar en USUARIOS (Credenciales) ---
     if ($id_nuevo > 0 && !empty($psem_post)) {
         $sql_usuario_check = "SELECT id FROM usuarios WHERE id = $id_nuevo";
-        $result_usuario = mysqli_query($conexion, $sql_usuario_check);
+        $result_usuario = pg_query($conexion, $sql_usuario_check);
         
-        if (mysqli_num_rows($result_usuario) > 0) {
+        if (pg_num_rows($result_usuario) > 0) {
             $sql_usuario = "UPDATE usuarios SET nombre='$nombre_post', psem='$psem_post' WHERE id=$id_nuevo";
             $mensaje_usuario = "credenciales de usuario actualizadas.";
         } else {
@@ -91,12 +91,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mensaje_usuario = "credenciales de usuario creadas.";
         }
 
-        if (mysqli_query($conexion, $sql_usuario)) {
+        if (pg_query($conexion, $sql_usuario)) {
             $mensaje = "<div class='success-msg'>✅ $mensaje_trabajador y $mensaje_usuario Redirigiendo...</div>";
             header("Location: trabajadoreslist.php");
             exit();
         } else {
-            $mensaje = "<div class='error-msg'>❌ Error al gestionar usuario: " . mysqli_error($conexion) . "</div>";
+            $mensaje = "<div class='error-msg'>❌ Error al gestionar usuario: " . pg_error($conexion) . "</div>";
         }
     } elseif ($id_nuevo > 0) {
         $mensaje = "<div class='success-msg'>✅ $mensaje_trabajador (Credenciales no modificadas/creadas).</div>";
@@ -334,5 +334,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </html>
 
 <?php
-mysqli_close($conexion);
+pg_close($conexion);
+
 ?>
