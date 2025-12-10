@@ -17,9 +17,16 @@ if (!$conexion) {
 }
 else
 { echo "conexion valida";
-$venta_corte = mysqli_fetch_assoc(mysqli_query($conexion, "SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
+ <?php 
+        // Muestra el mensaje de éxito después de la redirección
+        if (isset($_GET['success']) && $_GET['success'] == 1) {
+            $venta_corte = pg_fetch_assoc(pg_query($conexion, "SELECT VentaDia FROM cortecaja WHERE fecha = '$fecha_actual' ORDER BY id DESC LIMIT 1"));
             $monto = number_format($venta_corte['VentaDia'] ?? 0.00, 2);
             echo "<div class='success-msg'><i class='fas fa-check-circle'></i> ¡Corte de Caja realizado exitosamente! Total: $$monto</div>";
+        }
+        // Muestra otros mensajes de error/advertencia
+        echo $mensaje; 
+        ?>
 }
 // ... (resto del código)
 ?>
