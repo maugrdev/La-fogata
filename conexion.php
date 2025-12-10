@@ -15,15 +15,5 @@ $conexion = pg_connect($conn_string);
 if (!$conexion) {
     die("Error de conexión a PostgreSQL: " . pg_last_error());
 }
-else
-{ echo "conexion valida";
-
-            $venta_corte = pg_fetch_assoc(pg_query($conexion, "SELECT VentaDia FROM cortecaja"));
-            $monto = number_format($venta_corte['VentaDia'] ?? 0.00, 2);
-            echo "<div class='success-msg'><i class='fas fa-check-circle'></i> ¡Corte de Caja realizado exitosamente! Total: $$monto</div>";
-        
-        // Muestra otros mensajes de error/advertencia
-
-}
 // ... (resto del código)
 ?>
